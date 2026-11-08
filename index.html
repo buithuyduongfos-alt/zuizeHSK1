@@ -696,6 +696,11 @@
     font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft);
   }
   .shoot-hud b{ color:var(--ink); }
+  .sfx-btn{
+    margin-left:8px; padding:2px 8px; border-radius:999px; cursor:pointer; font-size:14px; line-height:1.3;
+    border:1px solid var(--paper-deep); background:rgba(255,255,255,.75);
+  }
+  .sfx-btn:hover{ border-color:var(--gold); }
   .shoot-hud .hit-n{ color:var(--bamboo); } .shoot-hud .miss-n{ color:var(--seal); }
   .chick{
     position:absolute; left:0; top:0; width:112px; height:94px; z-index:2;
@@ -3384,6 +3389,90 @@ const CHICK_SVG = `<svg viewBox="0 0 120 100" aria-hidden="true">
   <path d="M50 88 l-3 8 M64 88 l3 8" stroke="#E59A2F" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 
+/* ===== Âm thanh trò Bắn gà (tự tổng hợp bằng Web Audio, không cần file) ===== */
+let sfxCtx = null;
+let sfxOn = true;
+try{ sfxOn = localStorage.getItem("hsk1-tieng-ga") !== "off"; }catch(e){}
+function sfxReady(){
+  if(!sfxOn) return null;
+  try{
+    if(!sfxCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      sfxCtx = new AC();
+    }
+    if(sfxCtx.state === "suspended") sfxCtx.resume();
+    return sfxCtx;
+  }catch(e){ return null; }
+}
+// một tiếng "cục" của gà: sóng răng cưa trượt giọng, lọc dải cho giống giọng gà
+function cluckAt(ctx, t, f0, f1, dur, vol){
+  const o = ctx.createOscillator(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  bp.type = "bandpass"; bp.frequency.value = 1300; bp.Q.value = 2.2;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+function noiseAt(ctx, t, dur, vol, type, f0, f1){
+  const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  src.buffer = buf;
+  f.type = type; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(f); f.connect(g); g.connect(ctx.destination);
+  src.start(t); src.stop(t + dur + 0.02);
+}
+function sfx(name){
+  const ctx = sfxReady();
+  if(!ctx) return;
+  const t = ctx.currentTime + 0.01, r = ()=> 0.9 + Math.random() * 0.2;
+  if(name === "cluck"){            // gà xuất hiện: "cục cục cục"
+    const n = 2 + Math.floor(Math.random() * 2);
+    for(let i = 0; i < n; i++) cluckAt(ctx, t + i * 0.13, 620 * r(), 430 * r(), 0.075, 0.22);
+  } else if(name === "shoot"){     // tên bay: "vút"
+    noiseAt(ctx, t, 0.16, 0.25, "bandpass", 2600, 900);
+  } else if(name === "hit"){       // trúng tên: gà kêu "quác" thất thanh
+    const o = ctx.createOscillator(), lfo = ctx.createOscillator(), lg = ctx.createGain();
+    const bp = ctx.createBiquadFilter(), g = ctx.createGain();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(800 * r(), t);
+    o.frequency.exponentialRampToValueAtTime(1500, t + 0.07);
+    o.frequency.exponentialRampToValueAtTime(520, t + 0.34);
+    lfo.frequency.value = 34; lg.gain.value = 90;
+    lfo.connect(lg); lg.connect(o.frequency);
+    bp.type = "bandpass"; bp.frequency.value = 1500; bp.Q.value = 1.6;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.32, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.36);
+    o.connect(bp); bp.connect(g); g.connect(ctx.destination);
+    o.start(t); lfo.start(t); o.stop(t + 0.38); lfo.stop(t + 0.38);
+    noiseAt(ctx, t, 0.09, 0.18, "lowpass", 1800, 300);          // tiếng "phập"
+    cluckAt(ctx, t + 0.42, 560, 380, 0.07, 0.14);                  // cục… lí nhí
+  } else if(name === "escape"){    // gà thoát: "cục ta cục tác" kiêu ngạo
+    [0, 0.12, 0.24, 0.42].forEach((dt, i)=>
+      cluckAt(ctx, t + dt, (i === 3 ? 900 : 560) * r(), (i === 3 ? 600 : 420) * r(), i === 3 ? 0.16 : 0.07, 0.2));
+  } else if(name === "wrong"){     // gõ sai: tiếng "bụp" trầm
+    cluckAt(ctx, t, 220, 140, 0.12, 0.18);
+  } else if(name === "win"){       // hạ hết gà
+    [523, 659, 784, 1046].forEach((f, i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + i * 0.11);
+      g.gain.exponentialRampToValueAtTime(0.2, t + i * 0.11 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.11 + 0.3);
+      o.connect(g); g.connect(ctx.destination); o.start(t + i * 0.11); o.stop(t + i * 0.11 + 0.32);
+    });
+  }
+}
+
 function renderBridge5(){
   cardEl.innerHTML = `
     <div class="word-counter">PHẦN 6</div>
@@ -3420,7 +3509,8 @@ function renderShoot(){
       <div class="shoot-field" id="shootField">
         <div class="shoot-hud">
           <span>Trúng <b class="hit-n" id="hudHit">0</b> · Bay mất <b class="miss-n" id="hudMiss">0</b></span>
-          <span>Còn <b id="hudLeft">0</b> gà</span>
+          <span>Còn <b id="hudLeft">0</b> gà
+            <button class="sfx-btn" id="sfxBtn" type="button" aria-label="Bật/tắt tiếng gà"></button></span>
         </div>
         <div class="archer" id="archer">
           <svg class="body" viewBox="0 0 90 110" aria-hidden="true">
@@ -3531,6 +3621,7 @@ function startShootGame(){
       hoverLeft: LV.hover ? LV.hover[0] + Math.random() * (LV.hover[1] - LV.hover[0]) : 0
     };
     alive.push(c);
+    sfx("cluck");
     spawned++;
     lastSpawn = clock;
   }
@@ -3560,6 +3651,7 @@ function startShootGame(){
     c.dead = true;
     const a = aimAt(c);
     archer.classList.add("loosed");
+    sfx("shoot");
     shootTimers.push(setTimeout(()=> archer.classList.remove("loosed"), 380));
     const L = 40;
     const mx = a.gx + Math.sin(a.ang) * L, my = a.gy - Math.cos(a.ang) * L;
@@ -3576,6 +3668,7 @@ function startShootGame(){
       b.remove();
       if(!c.el.isConnected) return;
       c.el.classList.add("shot");
+      sfx("hit");
       for(let i = 0; i < 7; i++){                     // lông gà bay tung
         const f = document.createElement("div");
         f.className = "feather";
@@ -3604,6 +3697,7 @@ function startShootGame(){
   }
 
   function escape(c){
+    sfx("escape");
     c.dead = true;
     alive = alive.filter(x => x !== c);
     missN++;
@@ -3633,6 +3727,7 @@ function startShootGame(){
     }
     if(force){
       shootWrongShots++;
+      sfx("wrong");
       input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
       say(`Không có con gà nào đọc là “<b>${k}</b>”. Thử lại nhé!`, "bad");
       input.select();
@@ -3645,6 +3740,7 @@ function startShootGame(){
   function finish(){
     shootDone = true;
     stopGame();
+    if(shootHits === total) shootTimers.push(setTimeout(()=> sfx("win"), 600));
     input.disabled = true;
     say(shootHits === total
       ? `<b>Hạ gọn cả ${total} con gà!</b> 🎯`
@@ -3684,6 +3780,18 @@ function startShootGame(){
   }
 
   hud();
+  const sfxBtn = document.getElementById("sfxBtn");
+  const sfxIcon = ()=>{ sfxBtn.textContent = sfxOn ? "🔊" : "🔇"; sfxBtn.title = sfxOn ? "Tắt tiếng gà" : "Bật tiếng gà"; };
+  sfxIcon();
+  sfxBtn.onclick = (e)=>{
+    e.stopPropagation();
+    sfxOn = !sfxOn;
+    try{ localStorage.setItem("hsk1-tieng-ga", sfxOn ? "on" : "off"); }catch(err){}
+    sfxIcon();
+    if(sfxOn) sfx("cluck");
+    input.focus();
+  };
+  sfxReady();
   input.focus();
   say(`Gõ phiên âm <b>không dấu</b> rồi bấm <b>Enter</b> để bắn tên. Chữ ü gõ u hoặc v.`);
   gameRAF = requestAnimationFrame(tick);

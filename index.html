@@ -1041,6 +1041,7 @@
 
   <aside class="side">
   <div class="lesson-picker" role="group" aria-label="Chọn bài học">
+    <button class="lesson-btn" data-l="4" type="button">Bài 4</button>
     <button class="lesson-btn" data-l="5" type="button">Bài 5</button>
     <button class="lesson-btn" data-l="6" type="button">Bài 6</button>
     <button class="lesson-btn" data-l="7" type="button">Bài 7</button>
@@ -1093,6 +1094,82 @@
 </a>
 <script>
 const LESSONS = {
+  "4": {
+    so:4, tag:"老师", zh:"第四课 · 她是我的汉语老师",
+    title:`Cô ấy là <span class="accent">cô giáo tiếng Trung</span> của tôi`, plain:"Cô ấy là cô giáo tiếng Trung của tôi",
+    VOCAB: [
+  { hanzi:"她",   pinyin:"tā",       meaning:"cô ấy, chị ấy",      ex:"她是我的汉语老师。",       exVi:"Cô ấy là cô giáo tiếng Trung của tôi." },
+  { hanzi:"谁",   pinyin:"shéi",     meaning:"ai",                 ex:"她是谁？",                 exVi:"Cô ấy là ai?" },
+  { hanzi:"的",   pinyin:"de",       meaning:"của (trợ từ)",       ex:"李月是我的老师。",         exVi:"Lý Nguyệt là cô giáo của tôi." },
+  { hanzi:"汉语", pinyin:"Hànyǔ",    meaning:"tiếng Trung, tiếng Hán", ex:"我的汉语老师叫李月。", exVi:"Cô giáo tiếng Trung của tôi tên là Lý Nguyệt." },
+  { hanzi:"哪",   pinyin:"nǎ",       meaning:"nào",                ex:"你是哪国人？",             exVi:"Bạn là người nước nào?" },
+  { hanzi:"国",   pinyin:"guó",      meaning:"nước, quốc gia",     ex:"我是中国人。",             exVi:"Tôi là người Trung Quốc." },
+  { hanzi:"呢",   pinyin:"ne",       meaning:"còn… thì sao? (trợ từ)", ex:"我是美国人。你呢？",   exVi:"Tôi là người Mỹ. Còn bạn?" },
+  { hanzi:"他",   pinyin:"tā",       meaning:"anh ấy, ông ấy",     ex:"他是我同学。",             exVi:"Anh ấy là bạn học của tôi." },
+  { hanzi:"同学", pinyin:"tóngxué",  meaning:"bạn học",            ex:"她是你同学吗？",           exVi:"Cô ấy là bạn học của bạn à?" },
+  { hanzi:"朋友", pinyin:"péngyou",  meaning:"bạn, bạn bè",        ex:"她不是我同学，她是我朋友。", exVi:"Cô ấy không phải bạn học của tôi, cô ấy là bạn của tôi." }
+    ],
+    PY_MAP: {
+  "她":"tā","他":"tā","谁":"shéi","的":"de","汉":"hàn","语":"yǔ","哪":"nǎ","国":"guó","呢":"ne",
+  "同":"tóng","学":"xué","朋":"péng","友":"you",
+  "是":"shì","我":"wǒ","你":"nǐ","人":"rén","中":"zhōng","美":"měi","老":"lǎo","师":"shī",
+  "不":"bù","吗":"ma","叫":"jiào","李":"lǐ","月":"yuè","那":"nà","说":"shuō"
+    },
+    WORD_PY: {
+  "李月":["Lǐ","Yuè"], "汉语":["Hàn","yǔ"], "中国":["Zhōng","guó"], "美国":["Měi","guó"],
+  "不是":["bú","shì"], "朋友":["péng","you"]
+    },
+    ART: {
+  "她": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="s" cx="50" cy="36" r="15"/>
+    <path class="a" d="M35 32 c-8 8 -8 22 -2 30 M65 32 c8 8 8 22 2 30"/>
+    <path class="s" d="M28 90 L40 58 H60 L72 90 Z"/></svg>`,
+  "他": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="s" cx="50" cy="36" r="15"/>
+    <path class="af" d="M36 30 q14 -14 28 0 q-14 -6 -28 0 z"/>
+    <path class="s" d="M26 90 v-18 a24 18 0 0 1 48 0 v18"/></svg>`,
+  "谁": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="s" cx="40" cy="40" r="15"/>
+    <path class="s" d="M16 88 a24 22 0 0 1 48 0"/>
+    <path class="a" d="M66 22 a10 10 0 1 1 14 9 c-4 2 -6 5 -6 10"/>
+    <circle class="af" cx="74" cy="52" r="3.5"/></svg>`,
+  "国": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <path class="s" d="M26 88 V14"/>
+    <path class="s" d="M26 16 H78 V50 H26"/>
+    <path class="af" d="M40 26 l3 6 l6 1 l-5 4 l1 6 l-5 -3 l-5 3 l1 -6 l-5 -4 l6 -1 z"/></svg>`,
+  "朋友": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="s" cx="32" cy="34" r="12"/><circle class="s" cx="68" cy="34" r="12"/>
+    <path class="s" d="M12 86 a20 20 0 0 1 40 0 M48 86 a20 20 0 0 1 40 0"/>
+    <path class="a" d="M42 62 q8 -8 16 0"/></svg>`,
+  "汉语": `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <path class="s" d="M14 20 h72 a6 6 0 0 1 6 6 v36 a6 6 0 0 1 -6 6 h-40 l-16 14 v-14 h-16 a6 6 0 0 1 -6 -6 v-36 a6 6 0 0 1 6 -6 z"/>
+    <path class="a" d="M50 30 v28 M36 38 h28 v12 h-28 z"/></svg>`
+    },
+    PAIRS: [
+  { a:{hanzi:"她", pinyin:"tā", vi:"cô ấy"},
+    b:{hanzi:"他", pinyin:"tā", vi:"anh ấy"},
+    tip:`Đọc <b>giống hệt nhau</b> (tā): <span class="zh">她</span> có bộ <span class="zh">女</span> (nữ) chỉ con gái; <span class="zh">他</span> có bộ <span class="zh">亻</span> (người) chỉ con trai.` },
+  { a:{hanzi:"哪", pinyin:"nǎ", vi:"nào (để hỏi)"},
+    b:{hanzi:"那", pinyin:"nà", vi:"kia, đó"},
+    tip:`<span class="zh">哪</span> có thêm bộ <span class="zh">口</span> (miệng) vì dùng để <b>hỏi</b>, đọc thanh 3 (nǎ); <span class="zh">那</span> chỉ trỏ, thanh 4 (nà).` },
+  { a:{hanzi:"呢", pinyin:"ne", vi:"còn… thì sao?"},
+    b:{hanzi:"吗", pinyin:"ma", vi:"…không? (hỏi có/không)"},
+    tip:`Cùng bộ <span class="zh">口</span>, cùng đứng cuối câu hỏi: <span class="zh">吗</span> hỏi có/không, <span class="zh">呢</span> hỏi lại "còn bạn thì sao?".` },
+  { a:{hanzi:"谁", pinyin:"shéi", vi:"ai"},
+    b:{hanzi:"说", pinyin:"shuō", vi:"nói"},
+    tip:`Cùng bộ <span class="zh">讠</span> (ngôn — lời nói) bên trái. <span class="zh">谁</span> có <span class="zh">隹</span> bên phải; <span class="zh">说</span> có <span class="zh">兑</span>.` }
+    ],
+    SENTENCES: [
+  { zh:"她是谁",           vi:"Cô ấy là ai?" },
+  { zh:"她是我的汉语老师", vi:"Cô ấy là cô giáo tiếng Trung của tôi." },
+  { zh:"你是哪国人",       vi:"Bạn là người nước nào?" },
+  { zh:"我是中国人",       vi:"Tôi là người Trung Quốc." },
+  { zh:"他是我同学",       vi:"Anh ấy là bạn học của tôi." },
+  { zh:"她是我朋友",       vi:"Cô ấy là bạn của tôi." }
+    ],
+    DISTRACTORS: ["她","他","谁","的","汉","语","哪","国","呢","同","学","朋","友","是","我","你","人","中","美","老","师","不","吗","叫","那"]
+  },
+
   "5": {
     so:5, tag:"年龄", zh:"第五课 · 她女儿今年二十岁",
     title:`Con gái cô ấy <span class="accent">năm nay</span> 20 tuổi`, plain:"Con gái cô ấy năm nay 20 tuổi",
@@ -2606,8 +2683,17 @@ function startBallGame(chars, target, S){
 
 /* ===== Chặng 4: Nối chữ (kiểu Pikachu / 连连看) ===== */
 
+// bỏ các từ trùng phiên âm/nghĩa (vd 她/他 cùng đọc tā) để thẻ ghép không bị nhập nhằng
+function distinctWords(){
+  const seenP = new Set(), seenM = new Set();
+  return shuffle([...Array(VOCAB.length).keys()]).filter(i=>{
+    const p = VOCAB[i].pinyin.toLowerCase(), m = VOCAB[i].meaning;
+    if(seenP.has(p) || seenM.has(m)) return false;
+    seenP.add(p); seenM.add(m); return true;
+  });
+}
 function buildMatchPlan(){
-  const words = shuffle([...Array(VOCAB.length).keys()]).slice(0, MATCH_PAIRS);
+  const words = distinctWords().slice(0, MATCH_PAIRS);
   const types = shuffle(["hp","hm","mp","hp","hm","mp"]);
   return words.map((wi, k)=>({ wi, type: types[k] }));
 }
@@ -2965,7 +3051,7 @@ function matchWrong(cell){
 /* ===== Chặng 5: Lật thẻ trí nhớ ===== */
 
 function buildMemPlan(){
-  return shuffle([...Array(VOCAB.length).keys()]).slice(0, MEM_PAIRS);
+  return distinctWords().slice(0, MEM_PAIRS);
 }
 
 function stopMemory(){

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>习字帖 · Luyện viết HSK1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<style>
+  :root{
+    --paper: #F3EAD8;
+    --paper-deep: #EADFC6;
+    --ink: #211E1A;
+    --ink-soft: #5B564C;
+    --seal: #A9382B;
+    --seal-deep: #7C271D;
+    --jade: #5C7A5F;
+    --jade-deep: #3E5641;
+    --gridline: #C7B79B;
+    --card: #FBF6EA;
+    --gold: #B8863B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% -10%, rgba(184,134,59,0.10), transparent 45%),
+      var(--paper);
+    font-family:'Noto Sans SC','Noto Serif SC',sans-serif;
+    color:var(--ink);
+    padding:48px 24px 80px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:34px;}
+  .eyebrow{
+    font-size:13px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 10px;font-weight:500;
+  }
+  h1{
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:56px;line-height:1;margin:0 0 12px;color:var(--ink);font-weight:400;
+  }
+  .subtitle{font-size:15px;color:var(--ink-soft);margin:0;font-family:'Noto Serif SC',serif;}
+  .rule{width:120px;height:2px;background:var(--gold);margin:22px auto 0;position:relative;}
+  .rule::before,.rule::after{content:'';position:absolute;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--seal);}
+  .rule::before{left:-16px;} .rule::after{right:-16px;}
+
+  .dash{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;
+  }
+  @media(max-width:640px){.dash{grid-template-columns:1fr;}}
+  .stat-card{
+    background:var(--card);border:1px solid var(--gridline);border-radius:8px;
+    padding:16px 18px;
+  }
+  .stat-card .num{
+    font-family:'Noto Serif SC',serif;font-size:30px;font-weight:600;color:var(--seal);
+    line-height:1;
+  }
+  .stat-card .lbl{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+
+  .week-card{
+    background:var(--card);border:1px solid var(--gridline);border-radius:8px;
+    padding:16px 18px 12px;margin-bottom:26px;
+  }
+  .week-card .lbl{font-size:12px;color:var(--ink-soft);margin:0 0 10px;}
+  .week-bars{display:flex;align-items:flex-end;gap:8px;height:64px;}
+  .week-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .week-bar .bar{
+    width:100%;max-width:26px;background:var(--gridline);border-radius:3px 3px 0 0;
+    min-height:3px;transition:height .2s ease;
+  }
+  .week-bar.today .bar{background:var(--seal);}
+  .week-bar .day-lbl{font-size:10px;color:var(--ink-soft);margin-top:6px;}
+  .week-bar .day-count{font-size:10px;color:var(--ink-soft);margin-bottom:3px;}
+
+  .lesson-tabs{
+    display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:22px;
+    scrollbar-width:thin;
+  }
+  .lesson-tab{
+    flex:0 0 auto;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:500;
+    border:1px solid var(--gridline);background:var(--card);color:var(--ink-soft);
+    padding:9px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    transition:background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .lesson-tab .cnt{font-weight:400;opacity:0.7;font-size:11px;margin-left:3px;}
+  .lesson-tab:hover{border-color:var(--seal);}
+  .lesson-tab.active{background:var(--ink);color:var(--card);border-color:var(--ink);}
+  .lesson-tab.mastered{border-color:var(--jade);}
+  .lesson-tab.mastered::before{content:'✓ ';color:var(--jade-deep);}
+
+  .lesson-head{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;}
+  .lesson-head h2{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;margin:0;}
+  .lesson-head .sub{font-size:12px;color:var(--ink-soft);}
+
+  .section{
+    background:var(--card);
+    border:1px solid var(--gridline);
+    border-radius:6px;
+    padding:20px 22px 18px;
+    margin-bottom:18px;
+  }
+  .section-top{
+    display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;
+  }
+  .meta{flex:1;min-width:160px;}
+  .meta .hanzi-lg{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:600;margin:0;color:var(--ink);}
+  .meta .pinyin{font-size:14px;color:var(--seal);font-weight:500;margin:2px 0 0;font-style:italic;}
+  .meta .gloss{font-size:13px;color:var(--ink-soft);margin:2px 0 0;}
+
+  .seal-badge{
+    width:36px;height:36px;border-radius:6px;
+    border:1.5px solid var(--seal);color:var(--seal);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Ma Shan Zheng',cursive;font-size:18px;
+    opacity:0.18;transform:rotate(-6deg);
+    transition:opacity .3s ease, transform .3s ease, background .3s ease, color .3s ease;
+    flex-shrink:0;
+  }
+  .seal-badge.done{
+    opacity:1;background:var(--seal);color:var(--card);border-color:var(--seal);
+    transform:rotate(-6deg) scale(1.05);
+  }
+
+  .row-actions{display:flex;gap:8px;align-items:center;margin-left:auto;}
+  button{
+    font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:500;
+    border:1px solid var(--ink); background:transparent;color:var(--ink);
+    padding:8px 14px;border-radius:3px;cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  button:hover{background:var(--ink);color:var(--card);}
+  button.primary{border-color:var(--seal);color:var(--seal);}
+  button.primary:hover{background:var(--seal);color:var(--card);}
+
+  .boxrow{display:flex;flex-wrap:nowrap;gap:10px;width:100%;}
+
+  .stage{
+    position:relative;flex:0 0 auto;
+    background:var(--paper-deep);
+    border:1px solid var(--gridline);border-radius:2px;
+    overflow:hidden;cursor:none;
+  }
+  .stage.demo{cursor:default;border-color:var(--seal);border-width:1.5px;}
+  .demo-tag{
+    position:absolute;top:0;left:0;z-index:6;
+    background:var(--seal);color:var(--card);
+    font-size:10px;font-weight:500;letter-spacing:0.04em;
+    padding:2px 7px;border-radius:0 0 4px 0;
+  }
+  .grid-lines{position:absolute;inset:0;pointer-events:none;}
+  .grid-lines line{stroke:var(--gridline);stroke-width:1;}
+  .grid-lines line.solid{stroke:#B7A57F;stroke-width:1.5;}
+  .target-layer{position:absolute;inset:0;}
+  .box-check{
+    position:absolute;top:4px;right:4px;width:18px;height:18px;
+    border-radius:50%;background:var(--jade);color:var(--card);
+    display:none;align-items:center;justify-content:center;font-size:11px;
+    z-index:5;
+  }
+  .box-check.show{display:flex;}
+  .box-clear{
+    position:absolute;bottom:4px;right:4px;width:20px;height:20px;
+    padding:0;border-radius:50%;border:1px solid var(--gridline);
+    background:var(--card);color:var(--ink-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;line-height:1;z-index:5;cursor:pointer;
+  }
+  .box-clear:hover{background:var(--seal);border-color:var(--seal);color:var(--card);}
+  .box-expand{
+    position:absolute;top:4px;left:4px;width:20px;height:20px;
+    padding:0;border-radius:50%;border:1px solid var(--gridline);
+    background:var(--card);color:var(--ink-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;line-height:1;z-index:5;cursor:pointer;
+  }
+  .box-expand:hover{background:var(--jade);border-color:var(--jade);color:var(--card);}
+  .stage.zoomed-out{opacity:0.28;}
+
+  .zoom-overlay{
+    position:fixed;inset:0;background:rgba(33,30,26,0.55);
+    display:none;align-items:center;justify-content:center;
+    z-index:1000;padding:20px;
+  }
+  .zoom-overlay.show{display:flex;}
+  .zoom-card{
+    background:var(--card);border-radius:10px;padding:20px 22px 18px;
+    max-width:96vw;box-shadow:0 10px 34px rgba(33,30,26,0.28);
+  }
+  .zoom-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .zoom-hanzi{font-family:'Noto Serif SC',serif;font-size:20px;margin:0;color:var(--ink);flex:1;}
+  .zoom-close{
+    width:32px;height:32px;padding:0;border-radius:50%;
+    border:1px solid var(--ink);background:transparent;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .zoom-close:hover{background:var(--ink);color:var(--card);}
+  .zoom-cellrow{display:flex;position:relative;cursor:none;}
+
+  .hint{font-size:12px;color:var(--ink-soft);margin:12px 0 0;min-height:16px;}
+  .hint.correct{color:var(--jade-deep);}
+  .hint.mistake{color:var(--seal-deep);}
+
+  #pen-cursor{
+    position:fixed;top:0;left:0;width:36px;height:36px;
+    pointer-events:none;z-index:9999;opacity:0;
+    transform-origin:7px 30px;
+    transform:rotate(-32deg);
+    transition:opacity .12s ease;
+  }
+  #pen-cursor.show{opacity:1;}
+
+  footer{text-align:center;margin-top:40px;color:var(--ink-soft);font-size:12px;letter-spacing:0.04em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">HSK 1 · 15 bài</p>
+    <h1>习字帖</h1>
+    <p class="subtitle">Luyện viết trọn bộ từ vựng HSK1, chia theo từng bài, theo dõi tiến độ mỗi ngày</p>
+    <div class="rule"></div>
+  </header>
+
+  <div class="dash">
+    <div class="stat-card">
+      <p class="num" id="stat-today">0</p>
+      <p class="lbl">Từ đã viết hôm nay</p>
+    </div>
+    <div class="stat-card">
+      <p class="num" id="stat-streak">0</p>
+      <p class="lbl">Ngày liên tiếp có luyện viết</p>
+    </div>
+    <div class="stat-card">
+      <p class="num" id="stat-total">0<span style="font-size:16px;color:var(--ink-soft);"> / 0</span></p>
+      <p class="lbl">Tổng số từ đã học</p>
+    </div>
+  </div>
+
+  <div class="week-card">
+    <p class="lbl">7 ngày gần nhất</p>
+    <div class="week-bars" id="week-bars"></div>
+  </div>
+
+  <div class="lesson-tabs" id="lesson-tabs"></div>
+
+  <div class="lesson-head">
+    <h2 id="lesson-title"></h2>
+    <span class="sub" id="lesson-sub"></span>
+  </div>
+
+  <div id="sections"></div>
+
+  <footer>写 一 笔 一 划 · Mỗi nét một nhịp thở</footer>
+</div>
+
+<div class="zoom-overlay" id="zoom-overlay">
+  <div class="zoom-card">
+    <div class="zoom-head">
+      <p class="zoom-hanzi" id="zoom-hanzi"></p>
+      <button class="zoom-close" id="zoom-close" title="Đóng" aria-label="Đóng">✕</button>
+    </div>
+    <div class="zoom-cellrow" id="zoom-cellrow"></div>
+    <p class="hint" id="zoom-hint"></p>
+  </div>
+</div>
+
+<svg id="pen-cursor" viewBox="0 0 36 36">
+  <line x1="14" y1="21" x2="29" y2="6" stroke="#B8863B" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="14" y1="21" x2="29" y2="6" stroke="#CDA35F" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="29" cy="6" r="3.4" fill="#211E1A"/>
+  <path d="M29 6 Q34 8 32 14" stroke="#A9382B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M17 18 C13 21 10 25 7 30 C11 27 15 24 19 20 Z" fill="#100F0D"/>
+  <path d="M16 17.5 C13.5 20 11.5 23 9 26.5" stroke="#3A362F" stroke-width="1" stroke-linecap="round" fill="none"/>
+</svg>
+
+<script>
+const LESSONS = [{"id": 1, "title": "Bài 1", "words": [{"char": "你好", "pinyin": "nǐ hǎo", "gloss": "xin chào"}, {"char": "你", "pinyin": "nǐ", "gloss": "bạn"}, {"char": "您", "pinyin": "nín", "gloss": "ngài (kính ngữ)"}, {"char": "你们", "pinyin": "nǐmen", "gloss": "các bạn"}, {"char": "对不起", "pinyin": "duìbuqǐ", "gloss": "xin lỗi"}, {"char": "没关系", "pinyin": "méi guānxi", "gloss": "không sao"}]}, {"id": 2, "title": "Bài 2", "words": [{"char": "谢谢", "pinyin": "xièxie", "gloss": "cảm ơn"}, {"char": "不客气", "pinyin": "bú kèqi", "gloss": "không có gì"}, {"char": "再见", "pinyin": "zàijiàn", "gloss": "tạm biệt"}]}, {"id": 3, "title": "Bài 3", "words": [{"char": "叫", "pinyin": "jiào", "gloss": "gọi là / tên là"}, {"char": "什么", "pinyin": "shénme", "gloss": "cái gì"}, {"char": "名字", "pinyin": "míngzi", "gloss": "tên"}, {"char": "我", "pinyin": "wǒ", "gloss": "tôi"}, {"char": "是", "pinyin": "shì", "gloss": "là"}, {"char": "老师", "pinyin": "lǎoshī", "gloss": "giáo viên"}, {"char": "吗", "pinyin": "ma", "gloss": "trợ từ nghi vấn"}, {"char": "学生", "pinyin": "xuésheng", "gloss": "học sinh"}, {"char": "人", "pinyin": "rén", "gloss": "người"}]}, {"id": 4, "title": "Bài 4", "words": [{"char": "她", "pinyin": "tā", "gloss": "cô ấy"}, {"char": "谁", "pinyin": "shéi", "gloss": "ai"}, {"char": "的", "pinyin": "de", "gloss": "của"}, {"char": "汉语", "pinyin": "Hànyǔ", "gloss": "tiếng Hán (tiếng Trung)"}, {"char": "哪", "pinyin": "nǎ", "gloss": "nào"}, {"char": "国", "pinyin": "guó", "gloss": "nước"}, {"char": "呢", "pinyin": "ne", "gloss": "trợ từ nghi vấn"}, {"char": "他", "pinyin": "tā", "gloss": "anh ấy"}, {"char": "同学", "pinyin": "tóngxué", "gloss": "bạn học"}, {"char": "朋友", "pinyin": "péngyou", "gloss": "bạn bè"}]}, {"id": 5, "title": "Bài 5", "words": [{"char": "家", "pinyin": "jiā", "gloss": "nhà / gia đình"}, {"char": "有", "pinyin": "yǒu", "gloss": "có"}, {"char": "女儿", "pinyin": "nǚ'ér", "gloss": "con gái"}, {"char": "几", "pinyin": "jǐ", "gloss": "mấy"}, {"char": "岁", "pinyin": "suì", "gloss": "tuổi"}, {"char": "了", "pinyin": "le", "gloss": "trợ từ (hoàn thành / thay đổi)"}, {"char": "今年", "pinyin": "jīnnián", "gloss": "năm nay"}, {"char": "多大", "pinyin": "duō dà", "gloss": "bao nhiêu tuổi"}, {"char": "一", "pinyin": "yī", "gloss": "một"}, {"char": "二", "pinyin": "èr", "gloss": "hai"}, {"char": "三", "pinyin": "sān", "gloss": "ba"}, {"char": "四", "pinyin": "sì", "gloss": "bốn"}, {"char": "五", "pinyin": "wǔ", "gloss": "năm"}, {"char": "六", "pinyin": "liù", "gloss": "sáu"}, {"char": "七", "pinyin": "qī", "gloss": "bảy"}, {"char": "八", "pinyin": "bā", "gloss": "tám"}, {"char": "九", "pinyin": "jiǔ", "gloss": "chín"}, {"char": "十", "pinyin": "shí", "gloss": "mười"}]}, {"id": 6, "title": "Bài 6", "words": [{"char": "会", "pinyin": "huì", "gloss": "biết / có thể"}, {"char": "说", "pinyin": "shuō", "gloss": "nói"}, {"char": "妈妈", "pinyin": "māma", "gloss": "mẹ"}, {"char": "菜", "pinyin": "cài", "gloss": "món ăn"}, {"char": "很", "pinyin": "hěn", "gloss": "rất"}, {"char": "好吃", "pinyin": "hǎochī", "gloss": "ngon"}, {"char": "吃", "pinyin": "chī", "gloss": "ăn"}, {"char": "做", "pinyin": "zuò", "gloss": "làm"}, {"char": "写", "pinyin": "xiě", "gloss": "viết"}, {"char": "汉字", "pinyin": "Hànzì", "gloss": "chữ Hán"}, {"char": "怎么", "pinyin": "zěnme", "gloss": "như thế nào"}, {"char": "读", "pinyin": "dú", "gloss": "đọc"}]}, {"id": 7, "title": "Bài 7", "words": [{"char": "请", "pinyin": "qǐng", "gloss": "mời / xin"}, {"char": "问", "pinyin": "wèn", "gloss": "hỏi"}, {"char": "今天", "pinyin": "jīntiān", "gloss": "hôm nay"}, {"char": "号", "pinyin": "hào", "gloss": "ngày (số)"}, {"char": "月", "pinyin": "yuè", "gloss": "tháng"}, {"char": "星期", "pinyin": "xīngqī", "gloss": "tuần"}, {"char": "昨天", "pinyin": "zuótiān", "gloss": "hôm qua"}, {"char": "明天", "pinyin": "míngtiān", "gloss": "ngày mai"}, {"char": "去", "pinyin": "qù", "gloss": "đi"}, {"char": "学校", "pinyin": "xuéxiào", "gloss": "trường học"}, {"char": "看", "pinyin": "kàn", "gloss": "xem / đọc"}, {"char": "书", "pinyin": "shū", "gloss": "sách"}]}, {"id": 8, "title": "Bài 8", "words": [{"char": "想", "pinyin": "xiǎng", "gloss": "muốn / nghĩ"}, {"char": "喝", "pinyin": "hē", "gloss": "uống"}, {"char": "茶", "pinyin": "chá", "gloss": "trà"}, {"char": "米饭", "pinyin": "mǐfàn", "gloss": "cơm"}, {"char": "下午", "pinyin": "xiàwǔ", "gloss": "buổi chiều"}, {"char": "商店", "pinyin": "shāngdiàn", "gloss": "cửa hàng"}, {"char": "买", "pinyin": "mǎi", "gloss": "mua"}, {"char": "个", "pinyin": "gè", "gloss": "cái (lượng từ)"}, {"char": "杯子", "pinyin": "bēizi", "gloss": "cái cốc"}, {"char": "这", "pinyin": "zhè", "gloss": "này"}, {"char": "多少钱", "pinyin": "duōshao qián", "gloss": "bao nhiêu tiền"}, {"char": "块", "pinyin": "kuài", "gloss": "đồng (đơn vị tiền)"}, {"char": "那", "pinyin": "nà", "gloss": "kia / đó"}]}, {"id": 9, "title": "Bài 9", "words": [{"char": "小", "pinyin": "xiǎo", "gloss": "nhỏ"}, {"char": "猫", "pinyin": "māo", "gloss": "con mèo"}, {"char": "在", "pinyin": "zài", "gloss": "ở"}, {"char": "那儿", "pinyin": "nàr", "gloss": "ở đó"}, {"char": "狗", "pinyin": "gǒu", "gloss": "con chó"}, {"char": "椅子", "pinyin": "yǐzi", "gloss": "cái ghế"}, {"char": "下面", "pinyin": "xiàmiàn", "gloss": "phía dưới"}, {"char": "哪儿", "pinyin": "nǎr", "gloss": "ở đâu"}, {"char": "工作", "pinyin": "gōngzuò", "gloss": "công việc / làm việc"}, {"char": "儿子", "pinyin": "érzi", "gloss": "con trai"}, {"char": "医院", "pinyin": "yīyuàn", "gloss": "bệnh viện"}, {"char": "生", "pinyin": "shēng", "gloss": "sinh"}, {"char": "爸爸", "pinyin": "bàba", "gloss": "bố"}]}, {"id": 10, "title": "Bài 10", "words": [{"char": "桌子", "pinyin": "zhuōzi", "gloss": "cái bàn"}, {"char": "上", "pinyin": "shàng", "gloss": "trên"}, {"char": "电脑", "pinyin": "diànnǎo", "gloss": "máy tính"}, {"char": "和", "pinyin": "hé", "gloss": "và"}, {"char": "本", "pinyin": "běn", "gloss": "quyển (lượng từ)"}, {"char": "里", "pinyin": "lǐ", "gloss": "trong"}, {"char": "前面", "pinyin": "qiánmiàn", "gloss": "phía trước"}, {"char": "后面", "pinyin": "hòumiàn", "gloss": "phía sau"}, {"char": "这儿", "pinyin": "zhèr", "gloss": "ở đây"}, {"char": "没有", "pinyin": "méiyǒu", "gloss": "không có"}, {"char": "能", "pinyin": "néng", "gloss": "có thể"}, {"char": "坐", "pinyin": "zuò", "gloss": "ngồi"}]}, {"id": 11, "title": "Bài 11", "words": [{"char": "现在", "pinyin": "xiànzài", "gloss": "bây giờ"}, {"char": "点", "pinyin": "diǎn", "gloss": "giờ"}, {"char": "分", "pinyin": "fēn", "gloss": "phút"}, {"char": "中午", "pinyin": "zhōngwǔ", "gloss": "buổi trưa"}, {"char": "吃饭", "pinyin": "chīfàn", "gloss": "ăn cơm"}, {"char": "时候", "pinyin": "shíhou", "gloss": "lúc / khi"}, {"char": "回", "pinyin": "huí", "gloss": "trở về"}, {"char": "我们", "pinyin": "wǒmen", "gloss": "chúng tôi"}, {"char": "电影", "pinyin": "diànyǐng", "gloss": "phim"}, {"char": "住", "pinyin": "zhù", "gloss": "ở / sống"}, {"char": "前", "pinyin": "qián", "gloss": "trước"}]}, {"id": 12, "title": "Bài 12", "words": [{"char": "天气", "pinyin": "tiānqì", "gloss": "thời tiết"}, {"char": "怎么样", "pinyin": "zěnmeyàng", "gloss": "như thế nào"}, {"char": "太", "pinyin": "tài", "gloss": "quá"}, {"char": "热", "pinyin": "rè", "gloss": "nóng"}, {"char": "冷", "pinyin": "lěng", "gloss": "lạnh"}, {"char": "下雨", "pinyin": "xiàyǔ", "gloss": "trời mưa"}, {"char": "雨", "pinyin": "yǔ", "gloss": "mưa"}, {"char": "小姐", "pinyin": "xiǎojiě", "gloss": "cô"}, {"char": "来", "pinyin": "lái", "gloss": "đến"}, {"char": "身体", "pinyin": "shēntǐ", "gloss": "cơ thể / sức khỏe"}, {"char": "爱", "pinyin": "ài", "gloss": "yêu / thích"}, {"char": "一些", "pinyin": "yìxiē", "gloss": "một ít"}, {"char": "水果", "pinyin": "shuǐguǒ", "gloss": "hoa quả"}, {"char": "水", "pinyin": "shuǐ", "gloss": "nước"}]}, {"id": 13, "title": "Bài 13", "words": [{"char": "喂", "pinyin": "wéi", "gloss": "a-lô"}, {"char": "也", "pinyin": "yě", "gloss": "cũng"}, {"char": "学习", "pinyin": "xuéxí", "gloss": "học tập"}, {"char": "上午", "pinyin": "shàngwǔ", "gloss": "buổi sáng"}, {"char": "睡觉", "pinyin": "shuìjiào", "gloss": "ngủ"}, {"char": "电视", "pinyin": "diànshì", "gloss": "ti vi"}, {"char": "喜欢", "pinyin": "xǐhuan", "gloss": "thích"}, {"char": "给", "pinyin": "gěi", "gloss": "cho"}, {"char": "打电话", "pinyin": "dǎ diànhuà", "gloss": "gọi điện thoại"}, {"char": "吧", "pinyin": "ba", "gloss": "trợ từ đề nghị"}]}, {"id": 14, "title": "Bài 14", "words": [{"char": "东西", "pinyin": "dōngxi", "gloss": "đồ vật"}, {"char": "一点儿", "pinyin": "yìdiǎnr", "gloss": "một chút"}, {"char": "苹果", "pinyin": "píngguǒ", "gloss": "táo"}, {"char": "看见", "pinyin": "kànjiàn", "gloss": "nhìn thấy"}, {"char": "先生", "pinyin": "xiānsheng", "gloss": "ông / tiên sinh"}, {"char": "开车", "pinyin": "kāichē", "gloss": "lái xe"}, {"char": "回来", "pinyin": "huílái", "gloss": "trở lại"}, {"char": "分钟", "pinyin": "fēnzhōng", "gloss": "phút"}, {"char": "后", "pinyin": "hòu", "gloss": "sau"}, {"char": "衣服", "pinyin": "yīfu", "gloss": "quần áo"}, {"char": "漂亮", "pinyin": "piàoliang", "gloss": "xinh đẹp"}, {"char": "啊", "pinyin": "a", "gloss": "trợ từ cảm thán"}, {"char": "不少", "pinyin": "bùshǎo", "gloss": "không ít"}, {"char": "这些", "pinyin": "zhèxiē", "gloss": "những cái này"}, {"char": "都", "pinyin": "dōu", "gloss": "đều"}]}, {"id": 15, "title": "Bài 15", "words": [{"char": "认识", "pinyin": "rènshi", "gloss": "quen biết"}, {"char": "大学", "pinyin": "dàxué", "gloss": "đại học"}, {"char": "饭店", "pinyin": "fàndiàn", "gloss": "khách sạn / nhà hàng"}, {"char": "出租车", "pinyin": "chūzūchē", "gloss": "taxi"}, {"char": "一起", "pinyin": "yìqǐ", "gloss": "cùng nhau"}, {"char": "高兴", "pinyin": "gāoxìng", "gloss": "vui"}, {"char": "听", "pinyin": "tīng", "gloss": "nghe"}, {"char": "飞机", "pinyin": "fēijī", "gloss": "máy bay"}]}];
+</script>
+<script>
+const STORAGE_KEY = 'hsk1_writing_progress_v1';
+const LAST_LESSON_KEY = 'hsk1_last_lesson_v1';
+const GAP = 10;
+const UNIT_TARGET = 100;
+const MAX_PRACTICE = 3;
+const TOTAL_WORDS = LESSONS.reduce((n, l) => n + l.words.length, 0);
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { days: {}, learned: {} };
+}
+function saveProgress() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch (e) {}
+}
+let progress = loadProgress();
+
+function wordKey(lessonId, char) { return lessonId + '::' + char; }
+
+function recordWordDone(lessonId, char) {
+  const key = wordKey(lessonId, char);
+  const today = todayStr();
+  if (!progress.days[today]) progress.days[today] = [];
+  if (!progress.days[today].includes(key)) progress.days[today].push(key);
+  progress.learned[key] = true;
+  saveProgress();
+  renderDashboard();
+  renderLessonTabs();
+}
+
+function dateLabel(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() - offset);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function computeStreak() {
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const d = dateLabel(i);
+    const count = (progress.days[d] || []).length;
+    if (count > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function renderDashboard() {
+  const today = todayStr();
+  document.getElementById('stat-today').textContent = (progress.days[today] || []).length;
+  document.getElementById('stat-streak').textContent = computeStreak();
+  document.getElementById('stat-total').innerHTML =
+    Object.keys(progress.learned).length + '<span style="font-size:16px;color:var(--ink-soft);"> / ' + TOTAL_WORDS + '</span>';
+
+  const weekBars = document.getElementById('week-bars');
+  weekBars.innerHTML = '';
+  const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+  let maxCount = 1;
+  const counts = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = dateLabel(i);
+    const c = (progress.days[d] || []).length;
+    counts.push({ d, c });
+    if (c > maxCount) maxCount = c;
+  }
+  counts.forEach(({ d, c }) => {
+    const isToday = d === today;
+    const dow = new Date(d + 'T00:00:00').getDay();
+    const barH = Math.max(3, Math.round((c / maxCount) * 52));
+    const el = document.createElement('div');
+    el.className = 'week-bar' + (isToday ? ' today' : '');
+    el.innerHTML = `<span class="day-count">${c || ''}</span><div class="bar" style="height:${barH}px;"></div><span class="day-lbl">${dayNames[dow]}</span>`;
+    weekBars.appendChild(el);
+  });
+}
+
+let activeLessonIdx = 0;
+try {
+  const saved = Number(localStorage.getItem(LAST_LESSON_KEY));
+  if (!Number.isNaN(saved) && saved >= 0 && saved < LESSONS.length) activeLessonIdx = saved;
+} catch (e) {}
+
+const tabsEl = document.getElementById('lesson-tabs');
+const sectionsEl = document.getElementById('sections');
+const lessonTitleEl = document.getElementById('lesson-title');
+const lessonSubEl = document.getElementById('lesson-sub');
+const penCursor = document.getElementById('pen-cursor');
+const rows = [];
+
+function renderLessonTabs() {
+  tabsEl.innerHTML = '';
+  LESSONS.forEach((lesson, i) => {
+    const learnedCount = lesson.words.filter(w => progress.learned[wordKey(lesson.id, w.char)]).length;
+    const mastered = learnedCount === lesson.words.length;
+    const tab = document.createElement('button');
+    tab.className = 'lesson-tab' + (i === activeLessonIdx ? ' active' : '') + (mastered ? ' mastered' : '');
+    tab.innerHTML = `${lesson.title}<span class="cnt">${learnedCount}/${lesson.words.length}</span>`;
+    tab.addEventListener('click', () => selectLesson(i));
+    tabsEl.appendChild(tab);
+  });
+}
+
+function selectLesson(i) {
+  activeLessonIdx = i;
+  try { localStorage.setItem(LAST_LESSON_KEY, String(i)); } catch (e) {}
+  renderLessonTabs();
+  renderLesson();
+}
+
+function renderLesson() {
+  const lesson = LESSONS[activeLessonIdx];
+  lessonTitleEl.textContent = lesson.title;
+  lessonSubEl.textContent = `${lesson.words.length} từ`;
+  sectionsEl.innerHTML = '';
+  rows.length = 0;
+
+  lesson.words.forEach((item, wi) => {
+    const numChars = Array.from(item.char).length;
+    const key = wordKey(lesson.id, item.char);
+    const alreadyLearned = !!progress.learned[key];
+    const section = document.createElement('div');
+    section.className = 'section';
+    section.innerHTML = `
+      <div class="section-top">
+        <div class="meta">
+          <p class="hanzi-lg">${item.char}</p>
+          <p class="pinyin">${item.pinyin}</p>
+          <p class="gloss">${item.gloss}</p>
+        </div>
+        <div class="seal-badge${alreadyLearned ? ' done' : ''}" id="seal-${wi}">已</div>
+        <div class="row-actions">
+          <button class="primary" data-action="reset-row" data-c="${wi}">Xóa</button>
+        </div>
+      </div>
+      <div class="boxrow" id="row-${wi}"></div>
+      <p class="hint" id="hint-${wi}">Xem ô đầu để biết thứ tự nét, rồi đồ theo chữ mờ ở các ô còn lại.</p>
+    `;
+    sectionsEl.appendChild(section);
+    buildRow(wi, item, numChars, lesson.id);
+  });
+}
+
+function buildRow(ci, item, numChars, lessonId) {
+  const rowEl = document.getElementById('row-' + ci);
+  rowEl.innerHTML = '';
+  const chars = Array.from(item.char);
+
+  const rowWidth = rowEl.clientWidth || sectionsEl.clientWidth || 900;
+  let practiceCount = Math.floor((rowWidth - GAP - numChars * UNIT_TARGET) / (numChars * UNIT_TARGET + GAP));
+  practiceCount = Math.max(2, Math.min(MAX_PRACTICE, practiceCount));
+  const totalBoxes = 1 + practiceCount;
+  const totalGaps = GAP * (totalBoxes - 1);
+  const unit = Math.max(64, (rowWidth - totalGaps) / (numChars * totalBoxes));
+  const boxW = unit * numChars;
+
+  const demoWriters = makeDemoBox(rowEl, ci, chars, boxW, unit);
+
+  const boxGroups = [];
+  const boxMetas = [];
+  for (let bi = 0; bi < practiceCount; bi++) {
+    const result = makePracticeBox(rowEl, ci, bi, chars, boxW, unit);
+    boxGroups.push(result.writers);
+    boxMetas.push(result.meta);
+  }
+  rows[ci] = { demo: demoWriters, boxes: boxGroups, boxMetas, count: practiceCount, chars, lessonId, char: item.char };
+}
+
+function gridSVG(unit) {
+  return `<svg class="grid-lines" viewBox="0 0 ${unit} ${unit}" preserveAspectRatio="none">
+      <line x1="0" y1="0" x2="${unit}" y2="${unit}" /><line x1="${unit}" y1="0" x2="0" y2="${unit}" />
+      <line x1="${unit/2}" y1="0" x2="${unit/2}" y2="${unit}" /><line x1="0" y1="${unit/2}" x2="${unit}" y2="${unit/2}" />
+      <line class="solid" x1="0" y1="0" x2="${unit}" y2="0" /><line class="solid" x1="0" y1="${unit}" x2="${unit}" y2="${unit}" />
+      <line class="solid" x1="0" y1="0" x2="0" y2="${unit}" /><line class="solid" x1="${unit}" y1="0" x2="${unit}" y2="${unit}" />
+    </svg>`;
+}
+
+function makeCell(unit, id, borderLeft) {
+  const cell = document.createElement('div');
+  cell.style.cssText = `position:relative;width:${unit}px;height:${unit}px;flex:0 0 auto;` +
+    (borderLeft ? `border-left:1px solid var(--gridline);` : '');
+  cell.innerHTML = `${gridSVG(unit)}<div class="target-layer" id="${id}"></div>`;
+  return cell;
+}
+
+function makeDemoBox(rowEl, ci, chars, boxW, unit) {
+  const box = document.createElement('div');
+  box.className = 'stage demo';
+  box.style.width = boxW + 'px';
+  box.style.height = unit + 'px';
+  box.innerHTML = `<span class="demo-tag">Thứ tự nét</span><div class="cell-row" style="display:flex;width:100%;height:100%;"></div>`;
+  rowEl.appendChild(box);
+  const cellRow = box.querySelector('.cell-row');
+
+  return chars.map((ch, k) => {
+    const id = `demo-${ci}-${k}`;
+    cellRow.appendChild(makeCell(unit, id, k > 0));
+    const w = HanziWriter.create(id, ch, {
+      width: unit,
+      height: unit,
+      padding: Math.max(6, unit * 0.1),
+      strokeColor: '#211E1A',
+      radicalColor: '#A9382B',
+      strokeAnimationSpeed: 1,
+      delayBetweenStrokes: 300,
+      delayBetweenLoops: 1200,
+      strokeFadeDuration: 300
+    });
+    w.loopCharacterAnimation();
+    return w;
+  });
+}
+
+function makePracticeBox(rowEl, ci, bi, chars, boxW, unit) {
+  const box = document.createElement('div');
+  box.className = 'stage';
+  box.style.width = boxW + 'px';
+  box.style.height = unit + 'px';
+  box.innerHTML = `<div class="cell-row" style="display:flex;width:100%;height:100%;"></div>
+      <div class="box-check" id="check-${ci}-${bi}">✓</div>
+      <button class="box-expand" data-action="zoom" data-c="${ci}" data-b="${bi}" title="Phóng to để viết">⤢</button>
+      <button class="box-clear" data-action="reset-box" data-c="${ci}" data-b="${bi}" title="Xóa ô này">✕</button>`;
+  rowEl.appendChild(box);
+  const cellRow = box.querySelector('.cell-row');
+  attachPen(cellRow);
+
+  const cells = [];
+  const writers = chars.map((ch, k) => {
+    const id = `box-${ci}-${bi}-${k}`;
+    const cell = makeCell(unit, id, k > 0);
+    cellRow.appendChild(cell);
+    cells.push(cell);
+    return HanziWriter.create(id, ch, {
+      width: unit,
+      height: unit,
+      padding: Math.max(6, unit * 0.1),
+      strokeColor: '#211E1A',
+      radicalColor: '#A9382B',
+      outlineColor: 'rgba(33,30,26,0.18)',
+      drawingColor: '#100F0D',
+      drawingWidth: 14,
+      showOutline: true,
+      strokeAnimationSpeed: 1.1,
+      delayBetweenStrokes: 200,
+      showCharacter: false,
+      highlightOnComplete: false
+    });
+  });
+  startBoxQuiz(writers, ci, bi);
+  return { writers, meta: { box, cellRow, cells, unit, chars } };
+}
+
+let activeZoom = null;
+
+function setHint(ci, text, cls) {
+  const el = document.getElementById('hint-' + ci);
+  if (el) { el.textContent = text; el.className = 'hint' + (cls ? ' ' + cls : ''); }
+  if (activeZoom && activeZoom.ci === ci) {
+    const zh = document.getElementById('zoom-hint');
+    zh.textContent = text;
+    zh.className = 'hint' + (cls ? ' ' + cls : '');
+  }
+}
+
+function markSeal(ci, done) {
+  const el = document.getElementById('seal-' + ci);
+  if (el) el.classList.toggle('done', done);
+}
+
+function checkRowComplete(ci) {
+  const checks = document.querySelectorAll(`#row-${ci} .box-check`);
+  const allDone = checks.length > 0 && Array.from(checks).every(c => c.classList.contains('show'));
+  if (allDone) {
+    setHint(ci, `Đã viết đủ ${rows[ci].count} ô cho từ này. Rất tốt!`, 'correct');
+    markSeal(ci, true);
+    recordWordDone(rows[ci].lessonId, rows[ci].char);
+  }
+}
+
+function startBoxQuiz(writers, ci, bi) {
+  let doneCount = 0;
+  writers.forEach((writer) => {
+    writer.quiz({
+      onCorrectStroke: () => setHint(ci, 'Đúng nét. Tiếp tục nào.', 'correct'),
+      onMistake: () => setHint(ci, 'Chưa đúng, thử lại nét này.', 'mistake'),
+      onComplete: () => {
+        doneCount += 1;
+        if (doneCount === writers.length) {
+          const el = document.getElementById(`check-${ci}-${bi}`);
+          if (el) el.classList.add('show');
+          checkRowComplete(ci);
+        }
+      }
+    });
+  });
+}
+
+sectionsEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const ci = Number(btn.dataset.c);
+  const action = btn.dataset.action;
+
+  if (action === 'reset-row') {
+    rows[ci].boxes.forEach((writers, bi) => {
+      writers.forEach(w => w.cancelQuiz());
+      document.getElementById(`check-${ci}-${bi}`).classList.remove('show');
+      startBoxQuiz(writers, ci, bi);
+    });
+    markSeal(ci, false);
+    setHint(ci, `Xem ô đầu để biết thứ tự nét, rồi đồ theo chữ mờ ở các ô còn lại.`);
+  }
+
+  if (action === 'reset-box') {
+    const bi = Number(btn.dataset.b);
+    const writers = rows[ci].boxes[bi];
+    writers.forEach(w => w.cancelQuiz());
+    document.getElementById(`check-${ci}-${bi}`).classList.remove('show');
+    startBoxQuiz(writers, ci, bi);
+    markSeal(ci, false);
+    setHint(ci, 'Đã xóa ô này, viết lại nhé.');
+  }
+
+  if (action === 'zoom') {
+    const bi = Number(btn.dataset.b);
+    openZoom(ci, bi);
+  }
+});
+
+const zoomOverlay = document.getElementById('zoom-overlay');
+const zoomCellRow = document.getElementById('zoom-cellrow');
+const zoomHanzi = document.getElementById('zoom-hanzi');
+attachPen(zoomCellRow);
+
+function computeZoomUnit(numChars) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const availW = (vw * 0.9 - 44) / numChars;
+  const availH = vh * 0.6;
+  return Math.max(110, Math.min(availW, availH, 340));
+}
+
+function openZoom(ci, bi) {
+  const meta = rows[ci].boxMetas[bi];
+  if (!meta) return;
+  activeZoom = { ci, bi };
+
+  const unit = computeZoomUnit(meta.cells.length);
+  zoomCellRow.innerHTML = '';
+  meta.cells.forEach((cell) => {
+    cell.style.width = unit + 'px';
+    cell.style.height = unit + 'px';
+    zoomCellRow.appendChild(cell);
+  });
+  rows[ci].boxes[bi].forEach((w) => {
+    w.updateDimensions({ width: unit, height: unit, padding: Math.max(8, unit * 0.1) });
+  });
+
+  meta.box.classList.add('zoomed-out');
+  zoomHanzi.textContent = meta.chars.join('');
+  setHint(ci, 'Đồ theo nét mờ trong ô đã phóng to.');
+  zoomOverlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeZoom() {
+  if (!activeZoom) return;
+  const { ci, bi } = activeZoom;
+  const meta = rows[ci].boxMetas[bi];
+
+  meta.cells.forEach((cell) => {
+    cell.style.width = meta.unit + 'px';
+    cell.style.height = meta.unit + 'px';
+    meta.cellRow.appendChild(cell);
+  });
+  rows[ci].boxes[bi].forEach((w) => {
+    w.updateDimensions({ width: meta.unit, height: meta.unit, padding: Math.max(6, meta.unit * 0.1) });
+  });
+
+  meta.box.classList.remove('zoomed-out');
+  zoomOverlay.classList.remove('show');
+  document.body.style.overflow = '';
+  activeZoom = null;
+}
+
+document.getElementById('zoom-close').addEventListener('click', closeZoom);
+zoomOverlay.addEventListener('click', (e) => { if (e.target === zoomOverlay) closeZoom(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && activeZoom) closeZoom(); });
+
+const PEN_TIP_X = 7;
+const PEN_TIP_Y = 30;
+function attachPen(box) {
+  box.addEventListener('mouseenter', () => penCursor.classList.add('show'));
+  box.addEventListener('mouseleave', () => penCursor.classList.remove('show'));
+  box.addEventListener('mousemove', (e) => {
+    penCursor.style.left = (e.clientX - PEN_TIP_X) + 'px';
+    penCursor.style.top = (e.clientY - PEN_TIP_Y) + 'px';
+  });
+}
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (activeZoom) closeZoom();
+    renderLesson();
+  }, 200);
+});
+
+renderDashboard();
+renderLessonTabs();
+renderLesson();
+</script>
+</body>
+</html>
+

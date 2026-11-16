@@ -274,7 +274,7 @@
     <span class="sub" id="lesson-sub"></span>
   </div>
 
-  <div class="download-card" id="download-card" hidden>
+  <div class="download-card" id="download-card">
     <div class="dl-info">
       <p class="dl-title">📄 Tải file luyện viết</p>
       <p class="dl-sub">File PDF chữ mẫu và ô tập viết của bài này, in ra để luyện viết tay.</p>
@@ -451,7 +451,10 @@ function renderDownloads(lesson) {
   const links = document.getElementById('dl-links');
   const files = WRITING_FILES[lesson.id] || [];
   links.innerHTML = '';
-  card.hidden = files.length === 0;
+  card.hidden = false;
+  card.querySelector('.dl-sub').textContent = files.length
+    ? `File PDF chữ mẫu và ô tập viết của ${lesson.title}, in ra để luyện viết tay.`
+    : `${lesson.title} chưa có file luyện viết. Chọn Bài 3 – Bài 15 để tải file.`;
   files.forEach((f, i) => {
     const a = document.createElement('a');
     a.className = 'dl-btn' + (i > 0 ? ' ghost' : '');

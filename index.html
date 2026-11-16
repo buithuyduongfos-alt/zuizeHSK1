@@ -64,6 +64,15 @@
   }
   .eyebrow .zh{ font-family:var(--zh); font-size:14px; color:var(--seal); letter-spacing:0.05em; }
 
+  .adv-link{ display:none; align-items:center; gap:6px; margin:4px auto 8px; width:max-content;
+    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; text-decoration:none;
+    color:var(--seal); border:1.5px solid var(--seal); border-radius:999px; padding:4px 11px 4px 8px;
+    background:var(--seal-tint); transition:background .15s, color .15s; }
+  .adv-link.show{ display:inline-flex; }
+  .adv-link:hover{ background:var(--seal); color:#fff; }
+  .adv-link .ico{ font-size:13px; line-height:1; }
+  @media (min-width:940px){ .adv-link{ margin-left:0; } }
+
   h1{
     font-weight:800;
     font-size:clamp(28px,7vw,40px);
@@ -1142,6 +1151,7 @@
   </div>
   <header>
     <div class="eyebrow"><span class="zh" id="lessonTag">天气</span><span>HSK1 · Bài <span id="lessonNo">12</span></span></div>
+    <a class="adv-link" id="advLink" href="#" target="_blank" rel="noopener" title="Mở bài tập nâng cao của bài này"><span class="ico">📝</span>Bài tập nâng cao</a>
     <h1 id="lessonTitle">Ngày mai trời <span class="accent">thế nào</span>?</h1>
     <svg class="brush-underline" viewBox="0 0 320 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4 8C60 2 140 12 200 6C240 2 280 10 316 5" stroke="#A8362B" stroke-width="4" stroke-linecap="round"/>
@@ -4126,6 +4136,11 @@ function resetAll(){
   render();
 }
 
+// Bài tập nâng cao: số bài → đường dẫn
+const ADV_LINKS = {
+  "6": "bai-tap-6.html"
+};
+
 function loadLesson(n){
   const L = LESSONS[n];
   if(!L) return;
@@ -4134,6 +4149,10 @@ function loadLesson(n){
   ART = L.ART; PAIRS = L.PAIRS; SENTENCES = L.SENTENCES; DISTRACTORS = L.DISTRACTORS;
   AUDIO_CUR = AUDIO[String(n)] || {};
 
+  const adv = document.getElementById("advLink");
+  const advUrl = ADV_LINKS[String(n)];
+  adv.classList.toggle("show", !!advUrl);
+  if(advUrl) adv.href = advUrl;
   document.getElementById("lessonTag").textContent = L.tag;
   document.getElementById("lessonNo").textContent = n;
   document.getElementById("lessonTitle").innerHTML = L.title;

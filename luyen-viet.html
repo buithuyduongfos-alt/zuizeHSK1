@@ -97,6 +97,26 @@
   .lesson-head h2{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;margin:0;}
   .lesson-head .sub{font-size:12px;color:var(--ink-soft);}
 
+  .download-card{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--card);border:1px dashed var(--seal);border-radius:8px;
+    padding:14px 18px;margin-bottom:18px;
+  }
+  .download-card[hidden]{display:none;}
+  .download-card .dl-info{flex:1;min-width:180px;}
+  .download-card .dl-title{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;margin:0;color:var(--ink);}
+  .download-card .dl-sub{font-size:12px;color:var(--ink-soft);margin:3px 0 0;}
+  .dl-links{display:flex;gap:8px;flex-wrap:wrap;}
+  .dl-btn{
+    display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+    font-size:13px;font-weight:500;color:var(--card);background:var(--seal);
+    border:1px solid var(--seal);padding:8px 14px;border-radius:3px;
+    transition:background .15s ease;
+  }
+  .dl-btn:hover{background:var(--seal-deep);border-color:var(--seal-deep);}
+  .dl-btn.ghost{background:transparent;color:var(--seal);}
+  .dl-btn.ghost:hover{background:var(--seal);color:var(--card);}
+
   .section{
     background:var(--card);
     border:1px solid var(--gridline);
@@ -254,6 +274,14 @@
     <span class="sub" id="lesson-sub"></span>
   </div>
 
+  <div class="download-card" id="download-card" hidden>
+    <div class="dl-info">
+      <p class="dl-title">📄 Tải file luyện viết</p>
+      <p class="dl-sub">File PDF chữ mẫu và ô tập viết của bài này, in ra để luyện viết tay.</p>
+    </div>
+    <div class="dl-links" id="dl-links"></div>
+  </div>
+
   <div id="sections"></div>
 
   <footer>写 一 笔 一 划 · Mỗi nét một nhịp thở</footer>
@@ -399,10 +427,46 @@ function selectLesson(i) {
   renderLesson();
 }
 
+const WRITING_FILES = {
+  3: [{ file: 'HSK1_B03.pdf', label: 'Tải file Bài 3' }],
+  4: [{ file: 'HSK1_B04.pdf', label: 'Tải file Bài 4' }],
+  5: [{ file: 'HSK1_B05.pdf', label: 'Tải file Bài 5' }],
+  6: [{ file: 'HSK1_B06.pdf', label: 'Tải file Bài 6' }],
+  7: [{ file: 'HSK1_B07.pdf', label: 'Tải file Bài 7' }],
+  8: [{ file: 'HSK1_B08.pdf', label: 'Tải file Bài 8' }],
+  9: [{ file: 'HSK1_B09.pdf', label: 'Tải file Bài 9' }],
+  10: [{ file: 'HSK1_B10.pdf', label: 'Tải file Bài 10' }],
+  11: [{ file: 'HSK1_B11.pdf', label: 'Tải file Bài 11' }],
+  12: [{ file: 'HSK1_B12.pdf', label: 'Tải file Bài 12' }],
+  13: [{ file: 'HSK1_B13.pdf', label: 'Tải file Bài 13' }],
+  14: [
+    { file: 'HSK1_B14_phan1.pdf', label: 'Phần 1 (东西 → 后)' },
+    { file: 'HSK1_B14_phan2.pdf', label: 'Phần 2 (衣服 → 都)' }
+  ],
+  15: [{ file: 'HSK1_B15.pdf', label: 'Tải file Bài 15' }]
+};
+
+function renderDownloads(lesson) {
+  const card = document.getElementById('download-card');
+  const links = document.getElementById('dl-links');
+  const files = WRITING_FILES[lesson.id] || [];
+  links.innerHTML = '';
+  card.hidden = files.length === 0;
+  files.forEach((f, i) => {
+    const a = document.createElement('a');
+    a.className = 'dl-btn' + (i > 0 ? ' ghost' : '');
+    a.href = 'tai-lieu/' + f.file;
+    a.setAttribute('download', f.file);
+    a.textContent = '⬇ ' + f.label;
+    links.appendChild(a);
+  });
+}
+
 function renderLesson() {
   const lesson = LESSONS[activeLessonIdx];
   lessonTitleEl.textContent = lesson.title;
   lessonSubEl.textContent = `${lesson.words.length} từ`;
+  renderDownloads(lesson);
   sectionsEl.innerHTML = '';
   rows.length = 0;
 
